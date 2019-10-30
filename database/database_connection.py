@@ -8,4 +8,3 @@ def connection(filename):
         return cnx
     except sqlite3.OperationalError:
         print('Failed to connect to database')
-
