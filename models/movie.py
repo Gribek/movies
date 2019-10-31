@@ -22,30 +22,46 @@ class Movie:
         return self.__id
 
     @staticmethod
+    def load_all(cursor):
+        """Load all movies."""
+        sql = 'SELECT * FROM MOVIES'
+        movies = []
+        cursor.execute(sql)
+        for raw in cursor.fetchall():
+            movie = Movie.create_object_from_data(raw)
+            movies.append(movie)
+        return movies
+
+    @staticmethod
     def load_by_title(cursor, title):
         """Load a movie with the given title."""
         sql = """SELECT * from MOVIES where title=?"""
         cursor.execute(sql, (title,))
         data = cursor.fetchone()
         if data:
-            loaded_movie = Movie()
-            loaded_movie.__id = data[0]
-            loaded_movie.title = data[1]
-            loaded_movie.year = data[2]
-            loaded_movie.runtime = data[3]
-            loaded_movie.genre = data[4]
-            loaded_movie.director = data[5]
-            loaded_movie.cast = data[6]
-            loaded_movie.writer = data[7]
-            loaded_movie.language = data[8]
-            loaded_movie.country = data[9]
-            loaded_movie.awards = data[10]
-            loaded_movie.imdb_rating = data[11]
-            loaded_movie.imdb_votes = data[12]
-            loaded_movie.box_office = data[13]
-            return loaded_movie
+            return Movie.create_object_from_data(data)
         else:
             return None
+
+    @staticmethod
+    def create_object_from_data(data):
+        """Create new object from the given data."""
+        movie = Movie()
+        movie.__id = data[0]
+        movie.title = data[1]
+        movie.year = data[2]
+        movie.runtime = data[3]
+        movie.genre = data[4]
+        movie.director = data[5]
+        movie.cast = data[6]
+        movie.writer = data[7]
+        movie.language = data[8]
+        movie.country = data[9]
+        movie.awards = data[10]
+        movie.imdb_rating = data[11]
+        movie.imdb_votes = data[12]
+        movie.box_office = data[13]
+        return movie
 
     def update(self, cursor):
         """Update information about the movie."""
