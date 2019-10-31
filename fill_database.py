@@ -15,32 +15,53 @@ movies = Movie.load_all(cursor)
 for movie in movies:
     url = 'http://www.omdbapi.com/?' + parse.urlencode({'apikey': 'ee1034',
                                                         't': movie.title})
-    data = request.urlopen(url).read()
-    json_data = json.loads(data)
+    api_data = request.urlopen(url).read()
+    json_data = json.loads(api_data)
+    data_to_collect = {
+        'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
+        'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
+        'Country': None, 'Awards': None, 'imdbRating': None,
+        'imdbVotes': None, 'BoxOffice': None
+    }
     if json_data['Response'] == 'True':
-        movie.title = json_data['Title']
-        movie.year = int(re.sub(r'\D', '', json_data['Year']))
-        movie.runtime = json_data['Runtime']
-        movie.genre = json_data['Genre']
-        movie.director = json_data['Director']
-        movie.cast = json_data['Actors']
-        movie.writer = json_data['Writer']
-        movie.language = json_data['Language']
-        movie.country = json_data['Country']
-        movie.awards = json_data['Awards']
-        movie.imdb_rating = float(json_data['imdbRating'])
-        movie.imdb_votes = int(re.sub(r'\D', '', json_data['imdbVotes']))
+        for key in data_to_collect.keys():
+            try:
+                if json_data[key] != "N/A":
+                    data_to_collect[key] = json_data[key]
+            except KeyError:
+                pass
+        # editing movie object with collected data
+        movie.title = data_to_collect['Title']
+        movie.runtime = data_to_collect['Runtime']
+        movie.genre = data_to_collect['Genre']
+        movie.director = data_to_collect['Director']
+        movie.cast = data_to_collect['Actors']
+        movie.writer = data_to_collect['Writer']
+        movie.language = data_to_collect['Language']
+        movie.country = data_to_collect['Country']
+        movie.awards = data_to_collect['Awards']
         try:
-            if json_data['BoxOffice'] != "N/A":
-                movie.box_office = int(re.sub(r'\D', '', json_data['BoxOffice']))
-        except KeyError:
+            movie.year = int(re.sub(r'\D', '', data_to_collect['Year']))
+        except TypeError:
+            pass
+        try:
+            movie.imdb_rating = float(data_to_collect['imdbRating'])
+        except TypeError:
+            pass
+        try:
+            movie.imdb_votes = int(re.sub(r'\D', '', data_to_collect['imdbVotes']))
+        except TypeError:
+            pass
+        try:
+            movie.box_office = int(re.sub(r'\D', '', data_to_collect['BoxOffice']))
+        except TypeError:
             pass
     else:
         print(f'Movie: {movie.title} not found.')
 
     # updating information about the movie in db
     movie.update(cursor)
-    cnx.commit()
 
+cnx.commit()
 cursor.close()
 cnx.close()
