@@ -22,9 +22,18 @@ class Movie:
         return self.__id
 
     @staticmethod
-    def load_all(cursor):
-        """Load all movies."""
+    def load_all(cursor, desc=False, *sort):
+        """Load all movies and sort them (optional)."""
         sql = 'SELECT * FROM MOVIES'
+        if sort:
+            if desc:
+                order = 'desc'
+            else:
+                order = ''
+            sql += ' ORDER BY '
+            for column in sort[:-1]:
+                sql += f'{column} {order}, '
+            sql += f'{sort[-1]} {order}'
         movies = []
         cursor.execute(sql)
         for raw in cursor.fetchall():
