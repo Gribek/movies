@@ -53,6 +53,18 @@ class Movie:
             return None
 
     @staticmethod
+    def load_with_filter(cursor, filter_by, value):
+        """Load movies filter by given parameter."""
+        sql = """SELECT * FROM MOVIES where {} like '%{}%'""".format(
+            filter_by, value)
+        cursor.execute(sql)
+        movies = []
+        for raw in cursor.fetchall():
+            movie = Movie.create_object_from_data(raw)
+            movies.append(movie)
+        return movies
+
+    @staticmethod
     def create_object_from_data(data):
         """Create new object from the given data."""
         movie = Movie()
