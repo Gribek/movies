@@ -47,7 +47,7 @@ def filter_by_movie_info(args):
     cnx.close()
 
 
-def compare(args):
+def compare_movies(args):
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies_to_compare = []
