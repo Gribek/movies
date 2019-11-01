@@ -5,6 +5,12 @@ import re
 from database.database_connection import connection
 from models.movie import Movie
 
+
+def convert_to_int(value):
+    """Remove non digit characters and convert to integer."""
+    return int(re.sub(r'\D', '', value))
+
+
 cnx = connection('database/movies.sqlite')
 cursor = cnx.cursor()
 
@@ -41,7 +47,7 @@ for movie in movies:
         movie.country = data_to_collect['Country']
         movie.awards = data_to_collect['Awards']
         try:
-            movie.year = int(re.sub(r'\D', '', data_to_collect['Year']))
+            movie.year = convert_to_int(data_to_collect['Year'])
         except TypeError:
             pass
         try:
@@ -49,11 +55,11 @@ for movie in movies:
         except TypeError:
             pass
         try:
-            movie.imdb_votes = int(re.sub(r'\D', '', data_to_collect['imdbVotes']))
+            movie.imdb_votes = convert_to_int(data_to_collect['imdbVotes'])
         except TypeError:
             pass
         try:
-            movie.box_office = int(re.sub(r'\D', '', data_to_collect['BoxOffice']))
+            movie.box_office = convert_to_int(data_to_collect['BoxOffice'])
         except TypeError:
             pass
     else:
