@@ -44,7 +44,7 @@ class Movie:
     @staticmethod
     def load_by_title(cursor, title):
         """Load a movie with the given title."""
-        sql = """SELECT * from MOVIES where title=?"""
+        sql = """SELECT * from MOVIES where title like ?"""
         cursor.execute(sql, (title,))
         data = cursor.fetchone()
         if data:
@@ -55,9 +55,8 @@ class Movie:
     @staticmethod
     def load_with_filter(cursor, filter_by, value):
         """Load movies filter by given parameter."""
-        sql = """SELECT * FROM MOVIES where {} like '%{}%'""".format(
-            filter_by, value)
-        cursor.execute(sql)
+        sql = """SELECT * FROM MOVIES where {} like ?""".format(filter_by)
+        cursor.execute(sql, (f'%{value}%',))
         movies = []
         for raw in cursor.fetchall():
             movie = Movie.create_object_from_data(raw)
