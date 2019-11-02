@@ -2,6 +2,8 @@ from database.database_connection import connection
 from models.movie import Movie
 from operator import attrgetter
 
+API_KEY = 'ee1034'
+API_URL = 'http://www.omdbapi.com/?'
 DATABASE = 'database/movies.sqlite'
 
 
