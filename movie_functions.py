@@ -1,10 +1,10 @@
 from urllib import request, parse
+from operator import attrgetter
 import json
 import re
 
 from database.database_connection import connection
 from models.movie import Movie
-from operator import attrgetter
 
 API_KEY = 'ee1034'
 API_URL = 'http://www.omdbapi.com/?'
@@ -106,11 +106,67 @@ def add_new_movie(args):
         print(f'Movie: {title} not found.')
 
 
+def high_scores(args):
+    """Show high scores for movies in database."""
+    result = {}
+    cnx = connection(DATABASE)
+    c = cnx.cursor()
+    movies = Movie.load_all(c)
+    runtime_convert_to_integer(movies)
+    box_office_none_to_zero(movies)
+    result['Runtime'] = max(movies, key=attrgetter('runtime'))
+    result['Box Office'] = max(movies, key=attrgetter('box_office'))
+    result['IMDB Rating'] = max(movies, key=(attrgetter('imdb_rating')))
+    awards_dict = create_awards_dict(movies)
+    oscars = key_with_max_value(awards_dict, 'oscar')
+    nominations = key_with_max_value(awards_dict, 'nominations')
+    awards_won = key_with_max_value(awards_dict, 'awards')
+    print(oscars, nominations, awards_won, result['Runtime'].title,
+          result['IMDB Rating'].title, result['Box Office'].title)
+    c.close()
+    cnx.close()
+
+
+def create_awards_dict(iterable):
+    """Create dictionary with movie titles and awards info."""
+    result = {}
+    regex = {'oscar': r'won (\d+) oscar', 'awards': r'(\d+) wins',
+             'oscar_nominated': r'nominated for (\d+) oscar',
+             'nominations': r'(\d+) nomination'}
+    for movie in iterable:
+        award_dict = {'oscar': 0, 'oscar_nominated': 0, 'awards': 0,
+                      'nominations': 0}
+        if movie.awards is not None:
+            for key in award_dict.keys():
+                awards_number = re.search(regex[key], movie.awards, re.I)
+                if awards_number is not None:
+                    award_dict[key] = int(awards_number.group(1))
+        result[movie.title] = award_dict
+    return result
+
+
+def key_with_max_value(dictionary, key):
+    """Return the key with the max value."""
+    v = [i[key] for i in list(dictionary.values())]
+    k = list(dictionary.keys())
+    return k[v.index(max(v))]
+
+
 def runtime_convert_to_integer(iterable):
     """Convert movies runtime attribute from string to integer."""
     for movie in iterable:
-        runtime = getattr(movie, 'runtime')
-        setattr(movie, 'runtime', int(runtime.split(' ')[0]))
+        try:
+            runtime = getattr(movie, 'runtime')
+            setattr(movie, 'runtime', int(runtime.split(' ')[0]))
+        except AttributeError:
+            setattr(movie, 'runtime', 0)
+
+
+def box_office_none_to_zero(iterable):
+    """Change values of box office from None to 0."""
+    for movie in iterable:
+        if movie.box_office is None:
+            movie.box_office = 0
 
 
 def get_data_from_api(movie_obj, api_url, api_key):
