@@ -15,9 +15,13 @@ def sort_movies(args):
     """Get a list of movies sorted by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
-    movies = Movie.load_all(c, args.order, *args.column)
-    for movie in movies:
-        print(*[getattr(movie, i) for i in args.column])
+    movies = Movie.load_all(c)
+    none_to_zero(movies)
+    none_to_empty_string(movies)
+    runtime_convert_to_integer(movies)
+    sorted_list = sorted(movies, key=attrgetter(*args.column), reverse=args.order)
+    for i in sorted_list:
+        print(i.title, i.year, i.runtime)
     c.close()
     cnx.close()
 
@@ -176,6 +180,25 @@ def runtime_convert_to_integer(iterable, set_zero=True):
                 setattr(movie, 'runtime', 0)
             else:
                 pass
+
+
+def none_to_zero(iterable):
+    """Replace None type objects to zero."""
+    attributes = ['year', 'imdb_rating', 'imdb_votes', 'box_office']
+    for attribute in attributes:
+        for movie in iterable:
+            if getattr(movie, attribute) is None:
+                setattr(movie, attribute, 0)
+
+
+def none_to_empty_string(iterable):
+    """Replace None type objects to empty string."""
+    attributes = ['genre', 'director', 'cast', 'writer', 'language',
+                  'country', 'awards']
+    for attribute in attributes:
+        for movie in iterable:
+            if getattr(movie, attribute) is None:
+                setattr(movie, attribute, '')
 
 
 def box_office_none_to_zero(iterable):
