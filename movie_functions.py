@@ -43,10 +43,16 @@ def filter_by_movie_info(args):
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
+    create_awards_dict(movies, overwrite_awards=True)
     if args.movie_info == 'oscar_nominated_no_win':
-        pass
+        r = [i for i in movies if i.awards['oscar'] == 0 and
+             i.awards['oscar_nominated'] > 0]
+        for movie in r:
+            print(movie.title, movie.awards['oscar_nominated'])
     elif args.movie_info == 'high_awards_win_rate':
-        pass
+        r = [i for i in movies if i.awards['awards'] > i.awards['nominations'] * 0.8]
+        for movie in r:
+            print(movie.title, movie.awards['awards'], movie.awards['nominations'])
     elif args.movie_info == 'high_box_office':
         result = [i for i in movies if i.box_office is not None and
                   i.box_office > 100_000_000]
@@ -73,9 +79,9 @@ def compare_movies(args):
             runtime_convert_to_integer(movies_to_compare, set_zero=False)
         elif attribute == 'awards_won':
             attribute = 'awards'
-            awards_dict = create_awards_dict(movies_to_compare)
+            create_awards_dict(movies_to_compare, overwrite_awards=True)
             for movie in movies_to_compare:
-                movie.awards = awards_dict[movie.title]['awards']
+                movie.awards = movie.awards['awards']
         try:
             m = max(movies_to_compare, key=attrgetter(attribute))
             print(m.title, getattr(m, attribute))
@@ -130,7 +136,7 @@ def high_scores(args):
     cnx.close()
 
 
-def create_awards_dict(iterable):
+def create_awards_dict(iterable, overwrite_awards=False):
     """Create dictionary with movie titles and awards info."""
     result = {}
     regex = {'oscar': r'won (\d+) oscar', 'awards': r'(\d+) wins',
@@ -144,7 +150,10 @@ def create_awards_dict(iterable):
                 awards_number = re.search(regex[key], movie.awards, re.I)
                 if awards_number is not None:
                     award_dict[key] = int(awards_number.group(1))
-        result[movie.title] = award_dict
+        if not overwrite_awards:
+            result[movie.title] = award_dict
+        else:
+            movie.awards = award_dict
     return result
 
 
