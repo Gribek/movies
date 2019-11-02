@@ -70,9 +70,12 @@ def compare_movies(args):
             print(f'Movie not found: {title}')
     if len(movies_to_compare) == 2:
         if attribute == 'runtime':
-            runtime_convert_to_integer(movies_to_compare)
+            runtime_convert_to_integer(movies_to_compare, set_zero=False)
         elif attribute == 'awards_won':
-            attribute = 'awards'  # TODO: convertion of awards in objects
+            attribute = 'awards'
+            awards_dict = create_awards_dict(movies_to_compare)
+            for movie in movies_to_compare:
+                movie.awards = awards_dict[movie.title]['awards']
         try:
             m = max(movies_to_compare, key=attrgetter(attribute))
             print(m.title, getattr(m, attribute))
@@ -149,17 +152,21 @@ def key_with_max_value(dictionary, key):
     """Return the key with the max value."""
     v = [i[key] for i in list(dictionary.values())]
     k = list(dictionary.keys())
-    return k[v.index(max(v))]
+    max_value = max(v)
+    return k[v.index(max_value)], max_value
 
 
-def runtime_convert_to_integer(iterable):
+def runtime_convert_to_integer(iterable, set_zero=True):
     """Convert movies runtime attribute from string to integer."""
     for movie in iterable:
         try:
             runtime = getattr(movie, 'runtime')
             setattr(movie, 'runtime', int(runtime.split(' ')[0]))
         except AttributeError:
-            setattr(movie, 'runtime', 0)
+            if set_zero:
+                setattr(movie, 'runtime', 0)
+            else:
+                pass
 
 
 def box_office_none_to_zero(iterable):
