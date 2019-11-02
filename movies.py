@@ -10,7 +10,7 @@ subparsers = parser.add_subparsers()
 parser_sort = subparsers.add_parser('sort')
 parser_sort.add_argument('column', nargs='+', choices=[
     'year', 'runtime', 'genre', 'director', 'cast', 'writer', 'language',
-    'country', 'awards', 'imdb_rating', 'imdb_votes', 'box_office', 'title'])
+    'country', 'awards', 'imdb_rating', 'imdb_votes', 'box_office'])
 parser_sort.add_argument('-d', '--order', action='store_true')
 parser_sort.set_defaults(function=sort_movies)
 
