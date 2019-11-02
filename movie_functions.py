@@ -83,6 +83,29 @@ def compare_movies(args):
     cnx.close()
 
 
+def add_new_movie(args):
+    """Add new movie to the database."""
+    title = args.movie_title.replace('_', ' ')
+    movie = Movie()
+    movie.title = title
+    response = get_data_from_api(movie, API_URL, API_KEY)
+    if response:
+        cnx = connection(DATABASE)
+        c = cnx.cursor()
+        check_database = Movie.load_by_title(c, movie.title)
+        if check_database is None:
+            m = movie.save(c)
+            if m:
+                print(f'Movie: {movie.title} successfully saved to the database')
+        else:
+            print(f'Movie: {movie.title} already in the database')
+        cnx.commit()
+        c.close()
+        cnx.close()
+    else:
+        print(f'Movie: {title} not found.')
+
+
 def runtime_convert_to_integer(iterable):
     """Convert movies runtime attribute from string to integer."""
     for movie in iterable:
@@ -135,8 +158,9 @@ def get_data_from_api(movie_obj, api_url, api_key):
             movie_obj.box_office = convert_to_int(data_to_collect['BoxOffice'])
         except TypeError:
             pass
+        return True
     else:
-        print(f'Movie: {movie_obj.title} not found.')
+        return False
 
 
 def convert_to_int(value):

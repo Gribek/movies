@@ -1,7 +1,7 @@
 import argparse
 
 from movie_functions import sort_movies, compare_movies, filter_by_parameter,\
-    filter_by_movie_info
+    filter_by_movie_info, add_new_movie
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
@@ -38,7 +38,7 @@ parser_compare.set_defaults(function=compare_movies)
 # add command
 parser_add = subparsers.add_parser('add')
 parser_add.add_argument('movie_title')
-parser_add.set_defaults()
+parser_add.set_defaults(function=add_new_movie)
 
 # highscores command
 parser_highscores = subparsers.add_parser('highscores')

@@ -83,6 +83,18 @@ class Movie:
         movie.box_office = data[13]
         return movie
 
+    def save(self, cursor):
+        """Save new movie object."""
+        sql = """INSERT INTO MOVIES(title, year, runtime, genre, director,
+        cast, writer, language, country, awards, imdb_rating, imdb_votes,
+        box_office) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        values = (self.title, self.year, self.runtime, self.genre,
+                  self.director, self.cast, self.writer, self.language,
+                  self.country, self.awards, self.imdb_rating,
+                  self.imdb_votes, self.box_office)
+        cursor.execute(sql, values)
+        return True
+
     def update(self, cursor):
         """Update information about the movie."""
         sql = """UPDATE MOVIES SET title=?, year=?, runtime=?, genre=?,
