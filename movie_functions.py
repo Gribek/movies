@@ -12,6 +12,7 @@ DATABASE = 'database/movies.sqlite'
 
 
 def sort_movies(args):
+    """Get a list of movies sorted by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c, args.order, *args.column)
@@ -22,6 +23,7 @@ def sort_movies(args):
 
 
 def filter_by_parameter(args):
+    """Get a list of movies filter by the given parameter."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     if args.parameter == 'actor':
@@ -37,6 +39,7 @@ def filter_by_parameter(args):
 
 
 def filter_by_movie_info(args):
+    """Get a list of movies that match the given condition."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
@@ -54,6 +57,7 @@ def filter_by_movie_info(args):
 
 
 def compare_movies(args):
+    """Compare two movies by the given attribute."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies_to_compare = []
@@ -80,6 +84,7 @@ def compare_movies(args):
 
 
 def runtime_convert_to_integer(iterable):
+    """Convert movies runtime attribute from string to integer."""
     for movie in iterable:
         runtime = getattr(movie, 'runtime')
         setattr(movie, 'runtime', int(runtime.split(' ')[0]))
@@ -135,5 +140,5 @@ def get_data_from_api(movie_obj, api_url, api_key):
 
 
 def convert_to_int(value):
-    """Remove non digit characters and convert to integer."""
+    """Remove non digit characters and convert string to integer."""
     return int(re.sub(r'\D', '', value))
