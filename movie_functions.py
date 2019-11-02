@@ -12,18 +12,35 @@ DATABASE = 'database/movies.sqlite'
 
 
 def sort_movies(args):
-    """Get a list of movies sorted by the given attribute(s)."""
+    """Get all movies and sort them by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
     none_to_zero(movies)
     none_to_empty_string(movies)
     runtime_convert_to_integer(movies)
-    sorted_list = sorted(movies, key=attrgetter(*args.column), reverse=args.order)
-    for i in sorted_list:
-        print(i.title, i.year, i.runtime)
+    sorted_list = sorted(movies, key=attrgetter(*args.column),
+                         reverse=args.order)
+    result = []
+    for movie in sorted_list:
+        data = [movie.title]
+        for column in args.column:
+            data.append(getattr(movie, column))
+        result.append(data)
+
+    print_sorted_movies(args, result)
     c.close()
     cnx.close()
+
+
+def print_sorted_movies(args, result):
+    """Print a sorted movie list."""
+    template = '{0:40}'
+    for i in range(0, len(args.column)):
+        template += '| {%s:10} ' % str(i + 1)
+    print(template.format('Title', *args.column))
+    for raw in result:
+        print(template.format(*raw))
 
 
 def filter_by_parameter(args):
