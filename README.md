@@ -5,7 +5,7 @@ Database file in this repository has already been populated. To test the script 
 
 #### Available commands
 
-1. _sort_ command - sorting movies by chosen column(s).
+**1. _sort_ command - sorting movies by chosen column(s).**
 
 Command pattern: movies.py sort column
 
@@ -18,7 +18,7 @@ To sort in the descending order add flag: -d
  python movies.py sort year imdb_rating
  
  
- 2. _filter_by_ command - filter movies by chosen parameter
+ **2. _filter_by_ command - filter movies by chosen parameter**
  
  To filter by actor, director or language use following command pattern:  
  movies.py filter_by parameter parameter_name value  
@@ -44,7 +44,7 @@ To sort in the descending order add flag: -d
  python movies.py filter_by movie high_box_office
  
  
- 3. _compare_ command - compare two movies by selected column
+ **3. _compare_ command - compare two movies by selected column**
  
  Command pattern: movies.py compare column movie_title movie_title
  
@@ -57,7 +57,7 @@ To sort in the descending order add flag: -d
  Take into consideration that the comparison is not always possible due to the lack of necessary data about the movie. In that case, you will be notified by an appropriate message.
  
  
- 4. _add_ command - add new movie to the database
+ **4. _add_ command - add new movie to the database**
  
  Command pattern: movies.py add movie_title
  
@@ -68,7 +68,7 @@ To sort in the descending order add flag: -d
  
  If movie is already in the database, you will be informed.
  
- 5. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating
+ **5. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
  
   Command pattern: movies.py highscores
   
