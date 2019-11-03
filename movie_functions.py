@@ -61,8 +61,8 @@ def filter_by_movie_info(args):
                   i.awards['awards'] > i.awards['nominations'] * 0.8]
         columns = ['awards', 'nominations']
     else:
-        result = [(i.title, i.box_office) for i in movies if i.box_office is not None and
-                  i.box_office > 100_000_000]
+        result = [(i.title, i.box_office) for i in movies if
+                  i.box_office is not None and i.box_office > 100_000_000]
         columns = ['box_office']
     print_results(columns, result)
     c.close()
@@ -114,7 +114,8 @@ def add_new_movie(args):
         if check_database is None:
             m = movie.save(c)
             if m:
-                print(f'Movie: {movie.title} successfully saved to the database')
+                print(f'Movie: {movie.title} successfully saved to the'
+                      f' database')
         else:
             print(f'Movie: {movie.title} already in the database')
         cnx.commit()
@@ -126,7 +127,6 @@ def add_new_movie(args):
 
 def high_scores(args):
     """Show high scores for movies in database."""
-    result = {}
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
