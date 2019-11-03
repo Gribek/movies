@@ -21,26 +21,11 @@ def sort_movies(args):
     runtime_convert_to_integer(movies)
     sorted_list = sorted(movies, key=attrgetter(*args.column),
                          reverse=args.order)
-    result = []
-    for movie in sorted_list:
-        data = [movie.title]
-        for column in args.column:
-            data.append(getattr(movie, column))
-        result.append(data)
-
-    print_sorted_movies(args, result)
+    columns = args.column
+    result = prepare_result(columns, sorted_list)
+    print_results(columns, result)
     c.close()
     cnx.close()
-
-
-def print_sorted_movies(args, result):
-    """Print a sorted movie list."""
-    template = '{0:40}'
-    for i in range(0, len(args.column)):
-        template += '| {%s:10} ' % str(i + 1)
-    print(template.format('Title', *args.column))
-    for raw in result:
-        print(template.format(*raw))
 
 
 def filter_by_parameter(args):
@@ -48,13 +33,14 @@ def filter_by_parameter(args):
     cnx = connection(DATABASE)
     c = cnx.cursor()
     if args.parameter == 'actor':
-        filter_by = '[CAST]'
+        filter_by = '[CAST]'  # db issue
+        args.parameter = 'cast'
     else:
         filter_by = args.parameter
     value = args.value.replace('_', ' ')
     movies = Movie.load_with_filter(c, filter_by, value)
-    for movie in movies:
-        print(movie.title, getattr(movie, 'cast'))
+    result = prepare_result([args.parameter], movies)
+    print_results([args.parameter], result)
     c.close()
     cnx.close()
 
@@ -66,19 +52,19 @@ def filter_by_movie_info(args):
     movies = Movie.load_all(c)
     create_awards_dict(movies, overwrite_awards=True)
     if args.movie_info == 'oscar_nominated_no_win':
-        r = [i for i in movies if i.awards['oscar'] == 0 and
-             i.awards['oscar_nominated'] > 0]
-        for movie in r:
-            print(movie.title, movie.awards['oscar_nominated'])
+        result = [(i.title, i.awards['oscar_nominated']) for i in movies if
+                  i.awards['oscar'] == 0 and i.awards['oscar_nominated'] > 0]
+        columns = ['oscar nominated']
     elif args.movie_info == 'high_awards_win_rate':
-        r = [i for i in movies if i.awards['awards'] > i.awards['nominations'] * 0.8]
-        for movie in r:
-            print(movie.title, movie.awards['awards'], movie.awards['nominations'])
-    elif args.movie_info == 'high_box_office':
-        result = [i for i in movies if i.box_office is not None and
+        result = [(i.title, i.awards['awards'], i.awards['nominations'])
+                  for i in movies if
+                  i.awards['awards'] > i.awards['nominations'] * 0.8]
+        columns = ['awards', 'nominations']
+    else:
+        result = [(i.title, i.box_office) for i in movies if i.box_office is not None and
                   i.box_office > 100_000_000]
-        for movie in result:
-            print(movie.title, movie.box_office)
+        columns = ['box_office']
+    print_results(columns, result)
     c.close()
     cnx.close()
 
@@ -103,12 +89,14 @@ def compare_movies(args):
             create_awards_dict(movies_to_compare, overwrite_awards=True)
             for movie in movies_to_compare:
                 movie.awards = movie.awards['awards']
+        movie = None
         try:
-            m = max(movies_to_compare, key=attrgetter(attribute))
-            print(m.title, getattr(m, attribute))
+            movie = max(movies_to_compare, key=attrgetter(attribute))
         except TypeError:
             print('No necessary data for at least one of the movies')
-    # print(movies_to_compare[0].runtime, movies_to_compare[1].runtime)
+        if movie:
+            result = prepare_result([attribute], [movie])
+            print_results([attribute], result)
     c.close()
     cnx.close()
 
@@ -223,6 +211,27 @@ def box_office_none_to_zero(iterable):
     for movie in iterable:
         if movie.box_office is None:
             movie.box_office = 0
+
+
+def prepare_result(columns, movie_list):
+    """Prepare a list of results to print."""
+    result = []
+    for movie in movie_list:
+        data = [movie.title]
+        for column in columns:
+            data.append(getattr(movie, column))
+        result.append(data)
+    return result
+
+
+def print_results(columns, result):
+    """Format and print the results."""
+    template = '{0:40}'
+    for i in range(0, len(columns)):
+        template += '| {%s:<10} ' % str(i + 1)
+    print(template.format('Title', *columns))
+    for raw in result:
+        print(template.format(*raw))
 
 
 def get_data_from_api(movie_obj, api_url, api_key):
