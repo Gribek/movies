@@ -300,4 +300,9 @@ def get_data_from_api(movie_obj, api_url, api_key):
 
 def convert_to_int(value):
     """Remove non digit characters and convert string to integer."""
-    return int(re.sub(r'\D', '', value))
+    try:
+        return int(re.sub(r'\D', '', value))
+    except TypeError:
+        return None
+    except ValueError:
+        return None

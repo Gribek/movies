@@ -129,6 +129,8 @@ def test_convert_to_int():
     assert type(convert_to_int('dsa23e$')) is int
     assert convert_to_int('fds1@2!3$d4sdf-  re5') == 12345
     assert convert_to_int('123') == 123
+    assert convert_to_int('string') is None
+    assert convert_to_int(None) is None
 
 
 def test_if_print_results_prints_all_data(capfd, columns, result):
