@@ -146,6 +146,7 @@ def high_scores(args):
 
 
 def replace_underscores(text):
+    """Replace underscores with spaces."""
     return text.replace('_', ' ')
 
 
