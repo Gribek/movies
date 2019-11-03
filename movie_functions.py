@@ -277,21 +277,15 @@ def get_data_from_api(movie_obj, api_url, api_key):
         movie_obj.language = data_to_collect['Language']
         movie_obj.country = data_to_collect['Country']
         movie_obj.awards = data_to_collect['Awards']
-        try:
-            movie_obj.year = convert_to_int(data_to_collect['Year'])
-        except TypeError:
-            pass
+
+        movie_obj.year = convert_to_int(data_to_collect['Year'])
+        movie_obj.imdb_votes = convert_to_int(data_to_collect['imdbVotes'])
+        movie_obj.box_office = convert_to_int(data_to_collect['BoxOffice'])
         try:
             movie_obj.imdb_rating = float(data_to_collect['imdbRating'])
         except TypeError:
             pass
-        try:
-            movie_obj.imdb_votes = convert_to_int(data_to_collect['imdbVotes'])
-        except TypeError:
-            pass
-        try:
-            movie_obj.box_office = convert_to_int(data_to_collect['BoxOffice'])
-        except TypeError:
+        except ValueError:
             pass
         return True
     else:
