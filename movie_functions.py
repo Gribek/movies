@@ -180,7 +180,7 @@ def create_awards_dict(iterable, overwrite_awards=False):
 
 
 def key_with_max_value(dictionary, key):
-    """Return the key with the max value."""
+    """Find the key name with the maximum value, return both."""
     v = [i[key] for i in list(dictionary.values())]
     k = list(dictionary.keys())
     max_value = max(v)
