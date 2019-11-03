@@ -132,15 +132,23 @@ def high_scores(args):
     movies = Movie.load_all(c)
     runtime_convert_to_integer(movies)
     box_office_none_to_zero(movies)
-    result['Runtime'] = max(movies, key=attrgetter('runtime'))
-    result['Box Office'] = max(movies, key=attrgetter('box_office'))
-    result['IMDB Rating'] = max(movies, key=(attrgetter('imdb_rating')))
+    m_runtime = max(movies, key=attrgetter('runtime'))
+    m_box_office = max(movies, key=attrgetter('box_office'))
+    m_imdb_rating = max(movies, key=(attrgetter('imdb_rating')))
     awards_dict = create_awards_dict(movies)
     oscars = key_with_max_value(awards_dict, 'oscar')
     nominations = key_with_max_value(awards_dict, 'nominations')
     awards_won = key_with_max_value(awards_dict, 'awards')
-    print(oscars, nominations, awards_won, result['Runtime'].title,
-          result['IMDB Rating'].title, result['Box Office'].title)
+    result = [
+        ('Runtime (min)', m_runtime.title, m_runtime.runtime),
+        ('Box Office', m_box_office.title, m_box_office.box_office),
+        ('Awards Won', awards_won[0], awards_won[1]),
+        ('Nominations', nominations[0], nominations[1]),
+        ('Oscars', oscars[0], oscars[1]),
+        ('IMDB Rating', m_imdb_rating.title, m_imdb_rating.imdb_rating)
+    ]
+    columns = ['Movie', 'Value']
+    print_results(columns, result, first_col='COLUMN', column_wide=25)
     c.close()
     cnx.close()
 
@@ -229,12 +237,13 @@ def prepare_result(columns, movie_list):
     return result
 
 
-def print_results(columns, result):
+def print_results(columns, result, first_col='TITLE', column_wide=10):
     """Format and print the results."""
+    c = [replace_underscores(x.upper()) for x in columns]
     template = '{0:40}'
-    for i in range(0, len(columns)):
-        template += '| {%s:<10} ' % str(i + 1)
-    print(template.format('Title', *columns))
+    for i in range(0, len(c)):
+        template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
+    print(template.format(first_col, *c))
     for raw in result:
         print(template.format(*raw))
 
