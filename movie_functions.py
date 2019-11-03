@@ -37,7 +37,7 @@ def filter_by_parameter(args):
         args.parameter = 'cast'
     else:
         filter_by = args.parameter
-    value = args.value.replace('_', ' ')
+    value = replace_underscores(args.value)
     movies = Movie.load_with_filter(c, filter_by, value)
     result = prepare_result([args.parameter], movies)
     print_results([args.parameter], result)
@@ -76,7 +76,7 @@ def compare_movies(args):
     movies_to_compare = []
     attribute = args.column
     for title in args.movie_title:
-        movie = Movie.load_by_title(c, title.replace('_', ' '))
+        movie = Movie.load_by_title(c, replace_underscores(title))
         if movie is not None:
             movies_to_compare.append(movie)
         else:
@@ -103,7 +103,7 @@ def compare_movies(args):
 
 def add_new_movie(args):
     """Add new movie to the database."""
-    title = args.movie_title.replace('_', ' ')
+    title = replace_underscores(args.movie_title)
     movie = Movie()
     movie.title = title
     response = get_data_from_api(movie, API_URL, API_KEY)
@@ -143,6 +143,10 @@ def high_scores(args):
           result['IMDB Rating'].title, result['Box Office'].title)
     c.close()
     cnx.close()
+
+
+def replace_underscores(text):
+    return text.replace('_', ' ')
 
 
 def create_awards_dict(iterable, overwrite_awards=False):
