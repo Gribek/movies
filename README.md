@@ -1,6 +1,4 @@
 ### Movies
- 
-Database file in this repository has already been populated. To test the script that fills initial data source with data from OMDb API replace sqlite files (database/movies.sqlite) and use fill_database.py.
 
 
 #### Available commands
