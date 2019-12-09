@@ -1,3 +1,8 @@
+import re
+
+from support import convert_to_int
+
+
 class Movie:
     """Represents a single movie."""
 
@@ -80,6 +85,46 @@ class Movie:
         movie.imdb_votes = data[15]
         movie.box_office = data[16]
         movie.imdb_id = data[17]
+        return movie
+
+    @staticmethod
+    def create_object_from_omdb_data(omdb_response):
+        """Create new object from the data received from OMDb API."""
+        movie = Movie()
+        movie.title = omdb_response.movie_data['Title']
+        movie.genre = omdb_response.movie_data['Genre']
+        movie.director = omdb_response.movie_data['Director']
+        movie.actors = omdb_response.movie_data['Actors']
+        movie.writer = omdb_response.movie_data['Writer']
+        movie.language = omdb_response.movie_data['Language']
+        movie.country = omdb_response.movie_data['Country']
+        movie.awards = omdb_response.movie_data['Awards']
+        movie.imdb_id = omdb_response.movie_data['imdbID']
+
+        movie.runtime = convert_to_int(omdb_response.movie_data['Runtime'])
+        movie.year = convert_to_int(omdb_response.movie_data['Year'])
+        movie.imdb_votes = convert_to_int(
+            omdb_response.movie_data['imdbVotes'])
+        movie.box_office = convert_to_int(
+            omdb_response.movie_data['BoxOffice'])
+        try:
+            movie.imdb_rating = float(omdb_response.movie_data['imdbRating'])
+        except TypeError:
+            pass
+        except ValueError:
+            pass
+
+        awards = omdb_response.movie_data['Awards']
+        regex = {'oscars_won': r'won (\d+) oscar', 'awards_won': r'(\d+) wins',
+                 'oscar_nominations': r'nominated for (\d+) oscar',
+                 'award_nominations': r'(\d+) nomination'}
+        for key in regex:
+            result = re.search(regex[key], awards, re.I)
+            if result is not None:
+                number = int(result.group(1))
+            else:
+                number = 0
+            setattr(movie, key, number)
         return movie
 
     def save(self, cursor):
