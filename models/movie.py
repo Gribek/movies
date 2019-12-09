@@ -1,7 +1,5 @@
 import re
 
-from support import convert_to_int
-
 
 class Movie:
     """Represents a single movie."""
@@ -107,12 +105,8 @@ class Movie:
             omdb_response.movie_data['imdbVotes'])
         movie.box_office = convert_to_int(
             omdb_response.movie_data['BoxOffice'])
-        try:
-            movie.imdb_rating = float(omdb_response.movie_data['imdbRating'])
-        except TypeError:
-            pass
-        except ValueError:
-            pass
+        movie.imdb_rating = convert_to_float(
+            omdb_response.movie_data['imdbRating'])
 
         awards = omdb_response.movie_data['Awards']
         regex = {'oscars_won': r'won (\d+) oscar', 'awards_won': r'(\d+) wins',
@@ -154,3 +148,23 @@ class Movie:
                   self.imdb_votes, self.box_office, self.imdb_id, self.id)
         cursor.execute(sql, values)
         return True
+
+
+def convert_to_float(value):
+    """Convert string to float."""
+    try:
+        return float(value)
+    except TypeError:
+        return None
+    except ValueError:
+        return None
+
+
+def convert_to_int(value):
+    """Remove non digit characters and convert string to integer."""
+    try:
+        return int(re.sub(r'\D', '', value))
+    except TypeError:
+        return None
+    except ValueError:
+        return None
