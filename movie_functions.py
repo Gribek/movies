@@ -1,3 +1,4 @@
+from distutils.util import strtobool
 from urllib import request, parse
 from operator import attrgetter
 import json
@@ -257,7 +258,7 @@ def get_data_from_api(movie_obj, api_url, api_key):
         'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
         'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
         'Country': None, 'Awards': None, 'imdbRating': None,
-        'imdbVotes': None, 'BoxOffice': None
+        'imdbVotes': None, 'BoxOffice': None, 'imdbID': None
     }
     # getting information about movie from json
     if json_data['Response'] == 'True':
@@ -269,14 +270,24 @@ def get_data_from_api(movie_obj, api_url, api_key):
                 pass
         # editing movie object with collected data
         movie_obj.title = data_to_collect['Title']
-        movie_obj.runtime = data_to_collect['Runtime']
+        movie_obj.runtime = convert_to_int(data_to_collect['Runtime'])
         movie_obj.genre = data_to_collect['Genre']
         movie_obj.director = data_to_collect['Director']
-        movie_obj.cast = data_to_collect['Actors']
+        movie_obj.actors = data_to_collect['Actors']
         movie_obj.writer = data_to_collect['Writer']
         movie_obj.language = data_to_collect['Language']
         movie_obj.country = data_to_collect['Country']
         movie_obj.awards = data_to_collect['Awards']
+        movie_obj.imdb_id = data_to_collect['imdbID']
+
+        awards = data_to_collect['Awards']
+        regex = {'oscars_won': r'won (\d+) oscar', 'awards_won': r'(\d+) wins',
+                 'oscar_nominations': r'nominated for (\d+) oscar',
+                 'award_nominations': r'(\d+) nomination'}
+        for key in regex:
+            awards_number = re.search(regex[key], awards, re.I)
+            if awards_number is not None:
+                setattr(movie_obj, key, int(awards_number.group(1)))
 
         movie_obj.year = convert_to_int(data_to_collect['Year'])
         movie_obj.imdb_votes = convert_to_int(data_to_collect['imdbVotes'])
