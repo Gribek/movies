@@ -8,14 +8,18 @@ class Movie:
         self.runtime = None
         self.genre = None
         self.director = None
-        self.cast = None
+        self.actors = None
         self.writer = None
         self.language = None
         self.country = None
-        self.awards = None
+        self.oscars_won = None
+        self.oscar_nominations = None
+        self.awards_won = None
+        self.award_nominations = None
         self.imdb_rating = None
         self.imdb_votes = None
         self.box_office = None
+        self.imdb_id = None
 
     @property
     def id(self):
@@ -64,36 +68,44 @@ class Movie:
         movie.runtime = data[3]
         movie.genre = data[4]
         movie.director = data[5]
-        movie.cast = data[6]
+        movie.actors = data[6]
         movie.writer = data[7]
         movie.language = data[8]
         movie.country = data[9]
-        movie.awards = data[10]
-        movie.imdb_rating = data[11]
-        movie.imdb_votes = data[12]
-        movie.box_office = data[13]
+        movie.oscars_won = data[10]
+        movie.oscar_nominations = data[11]
+        movie.awards_won = data[12]
+        movie.award_nominations = data[13]
+        movie.imdb_rating = data[14]
+        movie.imdb_votes = data[15]
+        movie.box_office = data[16]
+        movie.imdb_id = data[17]
         return movie
 
     def save(self, cursor):
         """Save new movie object."""
         sql = """INSERT INTO MOVIES(title, year, runtime, genre, director,
-        cast, writer, language, country, awards, imdb_rating, imdb_votes,
-        box_office) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        actors, writer, language, country, oscars_won, oscar_nominations,
+        awards_won, award_nominations, imdb_rating, imdb_votes, box_office,
+        imdb_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         values = (self.title, self.year, self.runtime, self.genre,
-                  self.director, self.cast, self.writer, self.language,
-                  self.country, self.awards, self.imdb_rating,
-                  self.imdb_votes, self.box_office)
+                  self.director, self.actors, self.writer, self.language,
+                  self.country, self.oscars_won, self.oscar_nominations,
+                  self.awards_won, self.award_nominations, self.imdb_rating,
+                  self.imdb_votes, self.box_office, self.imdb_id)
         cursor.execute(sql, values)
         return True
 
     def update(self, cursor):
         """Update information about the movie."""
         sql = """UPDATE MOVIES SET title=?, year=?, runtime=?, genre=?,
-        director=?, cast=?, writer=?, language=?, country=?, awards=?,
-        imdb_rating=?, imdb_votes=?, box_office=? WHERE id=?"""
+        director=?, actors=?, writer=?, language=?, country=?, oscars_won=?,
+        oscar_nominations=?, awards_won=?, award_nominations=?, imdb_rating=?,
+        imdb_votes=?, box_office=?, imdb_id=? WHERE id=?"""
         values = (self.title, self.year, self.runtime, self.genre,
-                  self.director, self.cast, self.writer, self.language,
-                  self.country, self.awards, self.imdb_rating,
-                  self.imdb_votes, self.box_office, self.id)
+                  self.director, self.actors, self.writer, self.language,
+                  self.country, self.oscars_won, self.oscar_nominations,
+                  self.awards_won, self.award_nominations, self.imdb_rating,
+                  self.imdb_votes, self.box_office, self.imdb_id, self.id)
         cursor.execute(sql, values)
         return True
