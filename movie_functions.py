@@ -311,3 +311,32 @@ def convert_to_int(value):
         return None
     except ValueError:
         return None
+
+
+class OmdbApiResponse:
+    """The class that represents the response from OMDb API.
+
+    It sends a request to OMDb API and collects response data about
+    selected movie.
+    """
+
+    omdb_url = 'http://www.omdbapi.com/?'
+
+    def __init__(self, api_key, title):
+        url = self.omdb_url + parse.urlencode({'apikey': api_key, 't': title})
+        omdb_data = request.urlopen(url).read()
+        json_data = json.loads(omdb_data)
+        self.response = strtobool(json_data['Response'])
+        self.movie_data = {
+            'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
+            'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
+            'Country': None, 'Awards': None, 'imdbRating': None,
+            'imdbVotes': None, 'BoxOffice': None, 'imdbID': None
+        }
+        if self.response:
+            for key in self.movie_data:
+                try:
+                    if json_data[key] != "N/A":
+                        self.movie_data[key] = json_data[key]
+                except KeyError:
+                    pass
