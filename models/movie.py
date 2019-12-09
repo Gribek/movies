@@ -86,29 +86,32 @@ class Movie:
         return movie
 
     @staticmethod
-    def create_object_from_omdb_data(omdb_response):
+    def create_object_from_omdb_data(data):
         """Create new object from the data received from OMDb API."""
         movie = Movie()
-        movie.title = omdb_response.movie_data['Title']
-        movie.genre = omdb_response.movie_data['Genre']
-        movie.director = omdb_response.movie_data['Director']
-        movie.actors = omdb_response.movie_data['Actors']
-        movie.writer = omdb_response.movie_data['Writer']
-        movie.language = omdb_response.movie_data['Language']
-        movie.country = omdb_response.movie_data['Country']
-        movie.awards = omdb_response.movie_data['Awards']
-        movie.imdb_id = omdb_response.movie_data['imdbID']
+        movie.title = data['Title']
+        movie.genre = data['Genre']
+        movie.director = data['Director']
+        movie.actors = data['Actors']
+        movie.writer = data['Writer']
+        movie.language = data['Language']
+        movie.country = data['Country']
+        movie.awards = data['Awards']
+        movie.imdb_id = data['imdbID']
 
-        movie.runtime = convert_to_int(omdb_response.movie_data['Runtime'])
-        movie.year = convert_to_int(omdb_response.movie_data['Year'])
-        movie.imdb_votes = convert_to_int(
-            omdb_response.movie_data['imdbVotes'])
-        movie.box_office = convert_to_int(
-            omdb_response.movie_data['BoxOffice'])
-        movie.imdb_rating = convert_to_float(
-            omdb_response.movie_data['imdbRating'])
+        movie.runtime = Movie.convert_to_int(data['Runtime'])
+        movie.year = Movie.convert_to_int(data['Year'])
+        movie.imdb_votes = Movie.convert_to_int(data['imdbVotes'])
+        movie.box_office = Movie.convert_to_int(data['BoxOffice'])
+        movie.imdb_rating = Movie.convert_to_float(data['imdbRating'])
 
-        awards = omdb_response.movie_data['Awards']
+        awards = data.movie_data['Awards']
+        Movie.set_awards_attributes(awards, movie)
+        return movie
+
+    @staticmethod
+    def set_awards_attributes(awards, movie):
+        """Assign values to awards attributes."""
         regex = {'oscars_won': r'won (\d+) oscar', 'awards_won': r'(\d+) wins',
                  'oscar_nominations': r'nominated for (\d+) oscar',
                  'award_nominations': r'(\d+) nomination'}
@@ -119,7 +122,6 @@ class Movie:
             else:
                 number = 0
             setattr(movie, key, number)
-        return movie
 
     def save(self, cursor):
         """Save new movie object."""
@@ -149,22 +151,22 @@ class Movie:
         cursor.execute(sql, values)
         return True
 
+    @staticmethod
+    def convert_to_int(value):
+        """Remove non digit characters and convert string to integer."""
+        try:
+            return int(re.sub(r'\D', '', value))
+        except TypeError:
+            return None
+        except ValueError:
+            return None
 
-def convert_to_float(value):
-    """Convert string to float."""
-    try:
-        return float(value)
-    except TypeError:
-        return None
-    except ValueError:
-        return None
-
-
-def convert_to_int(value):
-    """Remove non digit characters and convert string to integer."""
-    try:
-        return int(re.sub(r'\D', '', value))
-    except TypeError:
-        return None
-    except ValueError:
-        return None
+    @staticmethod
+    def convert_to_float(value):
+        """Convert string to float."""
+        try:
+            return float(value)
+        except TypeError:
+            return None
+        except ValueError:
+            return None
