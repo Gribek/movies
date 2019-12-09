@@ -105,20 +105,20 @@ def compare_movies(args):
 def add_new_movie(args):
     """Add new movie to the database."""
     title = replace_underscores(args.movie_title)
-    movie = Movie()
-    movie.title = title
-    response = get_data_from_api(movie, API_URL, API_KEY)
-    if response:
+    omdb_resp = OmdbApiResponse(API_KEY, title)
+    if omdb_resp.response:
         cnx = connection(DATABASE)
         c = cnx.cursor()
-        check_database = Movie.load_by_title(c, movie.title)
+        check_database = Movie.load_by_title(c, omdb_resp.movie_data['Title'])
         if check_database is None:
+            movie = Movie.create_object_from_omdb_data(omdb_resp.movie_data)
             m = movie.save(c)
             if m:
                 print(f'Movie: {movie.title} successfully saved to the'
                       f' database')
         else:
-            print(f'Movie: {movie.title} already in the database')
+            print(f'Movie: {omdb_resp.movie_data["Title"]} already in the '
+                  f'database')
         cnx.commit()
         c.close()
         cnx.close()
@@ -301,16 +301,6 @@ def get_data_from_api(movie_obj, api_url, api_key):
         return True
     else:
         return False
-
-
-def convert_to_int(value):
-    """Remove non digit characters and convert string to integer."""
-    try:
-        return int(re.sub(r'\D', '', value))
-    except TypeError:
-        return None
-    except ValueError:
-        return None
 
 
 class OmdbApiResponse:

@@ -105,7 +105,7 @@ class Movie:
         movie.box_office = Movie.convert_to_int(data['BoxOffice'])
         movie.imdb_rating = Movie.convert_to_float(data['imdbRating'])
 
-        awards = data.movie_data['Awards']
+        awards = data['Awards']
         Movie.set_awards_attributes(awards, movie)
         return movie
 
