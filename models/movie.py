@@ -156,9 +156,7 @@ class Movie:
         """Remove non digit characters and convert string to integer."""
         try:
             return int(re.sub(r'\D', '', value))
-        except TypeError:
-            return None
-        except ValueError:
+        except (TypeError, ValueError):
             return None
 
     @staticmethod
@@ -166,7 +164,5 @@ class Movie:
         """Convert string to float."""
         try:
             return float(value)
-        except TypeError:
-            return None
-        except ValueError:
+        except (TypeError, ValueError):
             return None
