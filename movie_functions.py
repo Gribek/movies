@@ -1,4 +1,5 @@
 from distutils.util import strtobool
+from urllib.error import URLError
 from urllib import request, parse
 from operator import attrgetter
 import json
@@ -105,25 +106,30 @@ def compare_movies(args):
 def add_new_movie(args):
     """Add new movie to the database."""
     title = replace_underscores(args.movie_title)
-    omdb_resp = OmdbApiResponse(API_KEY, title)
-    if omdb_resp.response:
-        cnx = connection(DATABASE)
-        c = cnx.cursor()
-        check_database = Movie.load_by_title(c, omdb_resp.movie_data['Title'])
-        if check_database is None:
-            movie = Movie.create_object_from_omdb_data(omdb_resp.movie_data)
-            m = movie.save(c)
-            if m:
-                print(f'Movie: {movie.title} successfully saved to the'
-                      f' database')
-        else:
-            print(f'Movie: {omdb_resp.movie_data["Title"]} already in the '
-                  f'database')
-        cnx.commit()
-        c.close()
-        cnx.close()
+    try:
+        omdb = OmdbApiResponse(API_KEY, title)
+    except URLError:
+        print('Unable to receive data from OMDb API. '
+              'Check your internet connection.')
     else:
-        print(f'Movie: {title} not found.')
+        if omdb.response:
+            cnx = connection(DATABASE)
+            c = cnx.cursor()
+            check_database = Movie.load_by_title(c, omdb.movie_data['Title'])
+            if check_database is None:
+                movie = Movie.create_object_from_omdb_data(omdb.movie_data)
+                m = movie.save(c)
+                if m:
+                    print(f'Movie: {movie.title} successfully saved to the'
+                          f' database')
+            else:
+                print(f'Movie: {omdb.movie_data["Title"]} already in the '
+                      f'database')
+            cnx.commit()
+            c.close()
+            cnx.close()
+        else:
+            print(f'Movie: {title} not found.')
 
 
 def high_scores(args):
