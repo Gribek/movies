@@ -10,7 +10,7 @@ from models.movie import Movie
 from settings import API_KEY, DATABASE
 
 
-def sort_movies(args):
+def sort_movies(args):  # TODO Fix
     """Get all movies and sort them by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
@@ -27,7 +27,7 @@ def sort_movies(args):
     cnx.close()
 
 
-def filter_by_parameter(args):
+def filter_by_parameter(args):   # TODO Fix
     """Get a list of movies filter by the given parameter."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
@@ -44,7 +44,7 @@ def filter_by_parameter(args):
     cnx.close()
 
 
-def filter_by_movie_info(args):
+def filter_by_movie_info(args):   # TODO Fix
     """Get a list of movies that match the given condition."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
@@ -68,7 +68,7 @@ def filter_by_movie_info(args):
     cnx.close()
 
 
-def compare_movies(args):
+def compare_movies(args):   # TODO Fix
     """Compare two movies by the given attribute."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
