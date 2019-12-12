@@ -27,37 +27,32 @@ def sort_movies(args):  # TODO Fix
     cnx.close()
 
 
-def filter_by_parameter(args):   # TODO Fix
+def filter_by_parameter(args):
     """Get a list of movies filter by the given parameter."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     if args.parameter == 'actor':
-        filter_by = '[CAST]'  # db issue
-        args.parameter = 'cast'
-    else:
-        filter_by = args.parameter
+        args.parameter += 's'
     value = replace_underscores(args.value)
-    movies = Movie.load_with_filter(c, filter_by, value)
+    movies = Movie.load_with_filter(c, args.parameter, value)
     result = prepare_result([args.parameter], movies)
     print_results([args.parameter], result)
     c.close()
     cnx.close()
 
 
-def filter_by_movie_info(args):   # TODO Fix
+def filter_by_movie_info(args):
     """Get a list of movies that match the given condition."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
-    create_awards_dict(movies, overwrite_awards=True)
     if args.movie_info == 'oscar_nominated_no_win':
-        result = [(i.title, i.awards['oscar_nominated']) for i in movies if
-                  i.awards['oscar'] == 0 and i.awards['oscar_nominated'] > 0]
+        result = [(i.title, i.oscar_nominations) for i in movies if
+                  i.oscars_won == 0 and i.oscar_nominations > 0]
         columns = ['oscar nominated']
     elif args.movie_info == 'high_awards_win_rate':
-        result = [(i.title, i.awards['awards'], i.awards['nominations'])
-                  for i in movies if
-                  i.awards['awards'] > i.awards['nominations'] * 0.8]
+        result = [(i.title, i.awards_won, i.award_nominations) for i in movies
+                  if i.awards_won > i.award_nominations * 0.8]
         columns = ['awards', 'nominations']
     else:
         result = [(i.title, i.box_office) for i in movies if
