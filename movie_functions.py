@@ -63,7 +63,7 @@ def filter_by_movie_info(args):
     cnx.close()
 
 
-def compare_movies(args):   # TODO Fix
+def compare_movies(args):
     """Compare two movies by the given attribute."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
@@ -76,19 +76,11 @@ def compare_movies(args):   # TODO Fix
         else:
             print(f'Movie not found: {title}')
     if len(movies_to_compare) == 2:
-        if attribute == 'runtime':
-            runtime_convert_to_integer(movies_to_compare, set_zero=False)
-        elif attribute == 'awards_won':
-            attribute = 'awards'
-            create_awards_dict(movies_to_compare, overwrite_awards=True)
-            for movie in movies_to_compare:
-                movie.awards = movie.awards['awards']
-        movie = None
         try:
             movie = max(movies_to_compare, key=attrgetter(attribute))
         except TypeError:
             print('No necessary data for at least one of the movies')
-        if movie:
+        else:
             result = prepare_result([attribute], [movie])
             print_results([attribute], result)
     c.close()
