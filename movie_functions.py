@@ -7,9 +7,7 @@ import re
 
 from database.database_connection import connection
 from models.movie import Movie
-
-API_KEY = 'ee1034'
-DATABASE = 'database/movies.sqlite'
+from settings import API_KEY, DATABASE
 
 
 def sort_movies(args):
