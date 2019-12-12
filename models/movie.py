@@ -51,6 +51,18 @@ class Movie:
             return None
 
     @staticmethod
+    def load_movie_with_max_attribute(cursor, attribute):
+        """Load a movie with maximum value of selected attribute"""
+        sql = """SELECT * FROM movies WHERE {} = (SELECT MAX({}) FROM movies)
+        """.format(attribute, attribute)
+        cursor.execute(sql)
+        data = cursor.fetchone()
+        if data:
+            return Movie.create_object_from_data(data)
+        else:
+            return None
+
+    @staticmethod
     def load_with_filter(cursor, filter_by, value):
         """Load movies filter by given parameter."""
         sql = """SELECT * FROM MOVIES where {} like ?""".format(filter_by)
@@ -116,7 +128,10 @@ class Movie:
                  'oscar_nominations': r'nominated for (\d+) oscar',
                  'award_nominations': r'(\d+) nomination'}
         for key in regex:
-            result = re.search(regex[key], awards, re.I)
+            try:
+                result = re.search(regex[key], awards, re.I)
+            except TypeError:
+                result = None
             if result is not None:
                 number = int(result.group(1))
             else:
