@@ -10,14 +10,13 @@ from models.movie import Movie
 from settings import API_KEY, DATABASE
 
 
-def sort_movies(args):  # TODO Fix
+def sort_movies(args):
     """Get all movies and sort them by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
     none_to_zero(movies)
     none_to_empty_string(movies)
-    runtime_convert_to_integer(movies)
     sorted_list = sorted(movies, key=attrgetter(*args.column),
                          reverse=args.order)
     columns = args.column
@@ -191,7 +190,7 @@ def runtime_convert_to_integer(iterable, set_zero=True):
 
 def none_to_zero(iterable):
     """Replace None type objects to zero."""
-    attributes = ['year', 'imdb_rating', 'imdb_votes', 'box_office']
+    attributes = ['year', 'imdb_rating', 'imdb_votes', 'box_office', 'runtime']
     for attribute in attributes:
         for movie in iterable:
             if getattr(movie, attribute) is None:
@@ -200,8 +199,8 @@ def none_to_zero(iterable):
 
 def none_to_empty_string(iterable):
     """Replace None type objects to empty string."""
-    attributes = ['genre', 'director', 'cast', 'writer', 'language',
-                  'country', 'awards']
+    attributes = ['genre', 'director', 'actors', 'writer', 'language',
+                  'country', 'awards_won']
     for attribute in attributes:
         for movie in iterable:
             if getattr(movie, attribute) is None:
