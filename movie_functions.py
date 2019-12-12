@@ -135,23 +135,21 @@ def high_scores(args):
     """Show high scores for movies in database."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
-    movies = Movie.load_all(c)
-    runtime_convert_to_integer(movies)
-    box_office_none_to_zero(movies)
-    m_runtime = max(movies, key=attrgetter('runtime'))
-    m_box_office = max(movies, key=attrgetter('box_office'))
-    m_imdb_rating = max(movies, key=(attrgetter('imdb_rating')))
-    awards_dict = create_awards_dict(movies)
-    oscars = key_with_max_value(awards_dict, 'oscar')
-    nominations = key_with_max_value(awards_dict, 'nominations')
-    awards_won = key_with_max_value(awards_dict, 'awards')
+    movie_runtime = Movie.load_movie_with_max_attribute(c, 'runtime')
+    movie_box_office = Movie.load_movie_with_max_attribute(c, 'box_office')
+    movie_awards_won = Movie.load_movie_with_max_attribute(c, 'awards_won')
+    movie_award_nominations = Movie.load_movie_with_max_attribute(
+        c, 'award_nominations')
+    movie_oscars_won = Movie.load_movie_with_max_attribute(c, 'oscars_won')
+    movie_imdb_rating = Movie.load_movie_with_max_attribute(c, 'imdb_rating')
     result = [
-        ('Runtime (min)', m_runtime.title, m_runtime.runtime),
-        ('Box Office', m_box_office.title, m_box_office.box_office),
-        ('Awards Won', awards_won[0], awards_won[1]),
-        ('Nominations', nominations[0], nominations[1]),
-        ('Oscars', oscars[0], oscars[1]),
-        ('IMDB Rating', m_imdb_rating.title, m_imdb_rating.imdb_rating)
+        ('Runtime (min)', movie_runtime.title, movie_runtime.runtime),
+        ('Box Office', movie_box_office.title, movie_box_office.box_office),
+        ('Awards Won', movie_awards_won.title, movie_awards_won.title),
+        ('Award Nominations', movie_award_nominations.title,
+         movie_award_nominations.award_nominations),
+        ('Oscars', movie_oscars_won.title, movie_oscars_won.oscars_won),
+        ('IMDB Rating', movie_imdb_rating.title, movie_imdb_rating.imdb_rating)
     ]
     columns = ['Movie', 'Value']
     print_results(columns, result, first_col='COLUMN', column_wide=25)
