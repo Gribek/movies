@@ -98,8 +98,8 @@ def add_new_movie(args):
         if omdb.response:
             cnx = connection(DATABASE)
             c = cnx.cursor()
-            check_database = Movie.load_by_title(c, omdb.movie_data['Title'])
-            if check_database is None:
+            check_db = Movie.load_by_imdb_id(c, omdb.movie_data['imdbID'])
+            if check_db is None:
                 movie = Movie.create_object_from_omdb_data(omdb.movie_data)
                 m = movie.save(c)
                 if m:
