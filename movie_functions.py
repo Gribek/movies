@@ -14,13 +14,9 @@ def sort_movies(args):
     """Get all movies and sort them by the given attribute(s)."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
-    movies = Movie.load_all(c)
-    none_to_zero(movies)
-    none_to_empty_string(movies)
-    sorted_list = sorted(movies, key=attrgetter(*args.column),
-                         reverse=args.order)
+    movies = Movie.load_all(c, args.order, *args.column)
     columns = args.column
-    result = prepare_result(columns, sorted_list)
+    result = prepare_result(columns, movies)
     print_results(columns, result)
     c.close()
     cnx.close()
@@ -233,7 +229,8 @@ def print_results(columns, result, first_col='TITLE', column_wide=10):
         template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
     print(template.format(first_col, *c))
     for raw in result:
-        print(template.format(*raw))
+        data = ['' if i is None else i for i in raw]
+        print(template.format(*data))
 
 
 class OmdbApiResponse:
