@@ -51,6 +51,17 @@ class Movie:
             return None
 
     @staticmethod
+    def load_by_imdb_id(cursor, imdb_id):
+        """Load a movie with the given title."""
+        sql = """SELECT * from MOVIES where imdb_id = ?"""
+        cursor.execute(sql, (imdb_id,))
+        data = cursor.fetchone()
+        if data:
+            return Movie.create_object_from_data(data)
+        else:
+            return None
+
+    @staticmethod
     def load_movie_with_max_attribute(cursor, attribute):
         """Load a movie with maximum value of selected attribute"""
         sql = """SELECT * FROM movies WHERE {} = (SELECT MAX({}) FROM movies)
