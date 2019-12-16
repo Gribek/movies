@@ -218,6 +218,7 @@ def prepare_result(columns, movie_list):
         for column in columns:
             data.append(getattr(movie, column))
         result.append(data)
+    print(result)
     return result
 
 
@@ -231,6 +232,29 @@ def print_results(columns, result, first_col='TITLE', column_wide=10):
     for raw in result:
         data = ['' if i is None else i for i in raw]
         print(template.format(*data))
+
+
+class Result:
+
+    def __init__(self, columns, movie_list):
+        self.columns = columns
+        self.data = []
+        for movie in movie_list:
+            row = [movie.title]
+            for column in columns:
+                row.append(getattr(movie, column))
+            self.data.append(row)
+
+    def display(self, first_col='TITLE', column_wide=10):
+        """Format and print the result."""
+        c = [replace_underscores(x.upper()) for x in self.columns]
+        template = '{0:40}'
+        for i in range(0, len(c)):
+            template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
+        print(template.format(first_col, *c))
+        for row in self.data:
+            row_data = ['' if i is None else i for i in row]
+            print(template.format(*row_data))
 
 
 class OmdbApiResponse:
