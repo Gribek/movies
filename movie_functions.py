@@ -3,7 +3,6 @@ from urllib.error import URLError
 from urllib import request, parse
 from operator import attrgetter
 import json
-import re
 
 from database.database_connection import connection
 from models.movie import Movie
@@ -143,74 +142,6 @@ def high_scores(args):
 def replace_underscores(text):
     """Replace underscores with spaces."""
     return text.replace('_', ' ')
-
-
-def create_awards_dict(iterable, overwrite_awards=False):
-    """Create dictionary with movie titles and awards info."""
-    result = {}
-    regex = {'oscar': r'won (\d+) oscar', 'awards': r'(\d+) wins',
-             'oscar_nominated': r'nominated for (\d+) oscar',
-             'nominations': r'(\d+) nomination'}
-    for movie in iterable:
-        award_dict = {'oscar': 0, 'oscar_nominated': 0, 'awards': 0,
-                      'nominations': 0}
-        if movie.awards is not None:
-            for key in award_dict.keys():
-                awards_number = re.search(regex[key], movie.awards, re.I)
-                if awards_number is not None:
-                    award_dict[key] = int(awards_number.group(1))
-        if not overwrite_awards:
-            result[movie.title] = award_dict
-        else:
-            movie.awards = award_dict
-    return result
-
-
-def key_with_max_value(dictionary, key):
-    """Find the key name with the maximum value, return both."""
-    v = [i[key] for i in list(dictionary.values())]
-    k = list(dictionary.keys())
-    max_value = max(v)
-    return k[v.index(max_value)], max_value
-
-
-def runtime_convert_to_integer(iterable, set_zero=True):
-    """Convert movies runtime attribute from string to integer."""
-    for movie in iterable:
-        try:
-            runtime = getattr(movie, 'runtime')
-            setattr(movie, 'runtime', int(runtime.split(' ')[0]))
-        except AttributeError:
-            if set_zero:
-                setattr(movie, 'runtime', 0)
-            else:
-                pass
-
-
-def none_to_zero(iterable):
-    """Replace None type objects to zero."""
-    attributes = ['year', 'imdb_rating', 'imdb_votes', 'box_office', 'runtime']
-    for attribute in attributes:
-        for movie in iterable:
-            if getattr(movie, attribute) is None:
-                setattr(movie, attribute, 0)
-
-
-def none_to_empty_string(iterable):
-    """Replace None type objects to empty string."""
-    attributes = ['genre', 'director', 'actors', 'writer', 'language',
-                  'country', 'awards_won']
-    for attribute in attributes:
-        for movie in iterable:
-            if getattr(movie, attribute) is None:
-                setattr(movie, attribute, '')
-
-
-def box_office_none_to_zero(iterable):
-    """Change values of box office from None to 0."""
-    for movie in iterable:
-        if movie.box_office is None:
-            movie.box_office = 0
 
 
 class Result:
