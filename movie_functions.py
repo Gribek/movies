@@ -213,30 +213,6 @@ def box_office_none_to_zero(iterable):
             movie.box_office = 0
 
 
-def prepare_result(columns, movie_list):
-    """Prepare a list of results to print."""
-    result = []
-    for movie in movie_list:
-        data = [movie.title]
-        for column in columns:
-            data.append(getattr(movie, column))
-        result.append(data)
-    print(result)
-    return result
-
-
-def print_results(columns, result, first_col='TITLE', column_wide=10):
-    """Format and print the results."""
-    c = [replace_underscores(x.upper()) for x in columns]
-    template = '{0:40}'
-    for i in range(0, len(c)):
-        template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
-    print(template.format(first_col, *c))
-    for raw in result:
-        data = ['' if i is None else i for i in raw]
-        print(template.format(*data))
-
-
 class Result:
     """The class that represents results displayed in terminal."""
 
