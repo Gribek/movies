@@ -238,6 +238,7 @@ def print_results(columns, result, first_col='TITLE', column_wide=10):
 
 
 class Result:
+    """The class that represents results displayed in terminal."""
 
     def __init__(self, columns, movie_list):
         self.columns = columns
