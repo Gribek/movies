@@ -15,9 +15,8 @@ def sort_movies(args):
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c, args.order, *args.column)
-    columns = args.column
-    result = prepare_result(columns, movies)
-    print_results(columns, result)
+    result = Result(args.column, movies)
+    result.display()
     c.close()
     cnx.close()
 
@@ -29,9 +28,10 @@ def filter_by_parameter(args):
     if args.parameter == 'actor':
         args.parameter += 's'
     value = replace_underscores(args.value)
-    movies = Movie.load_with_filter(c, args.parameter, value)
-    result = prepare_result([args.parameter], movies)
-    print_results([args.parameter], result)
+    column = args.parameter
+    movies = Movie.load_with_filter(c, column, value)
+    result = Result([column], movies)
+    result.display()
     c.close()
     cnx.close()
 
@@ -42,18 +42,19 @@ def filter_by_movie_info(args):
     c = cnx.cursor()
     movies = Movie.load_all(c)
     if args.movie_info == 'oscar_nominated_no_win':
-        result = [(i.title, i.oscar_nominations) for i in movies if
-                  i.oscars_won == 0 and i.oscar_nominations > 0]
+        movie_list = [i for i in movies if i.oscars_won == 0 and
+                      i.oscar_nominations > 0]
         columns = ['oscar nominated']
     elif args.movie_info == 'high_awards_win_rate':
-        result = [(i.title, i.awards_won, i.award_nominations) for i in movies
-                  if i.awards_won > i.award_nominations * 0.8]
-        columns = ['awards', 'nominations']
+        movie_list = [i for i in movies
+                      if i.awards_won > i.award_nominations * 0.8]
+        columns = ['awards_won', 'award_nominations']
     else:
-        result = [(i.title, i.box_office) for i in movies if
-                  i.box_office is not None and i.box_office > 100_000_000]
+        movie_list = [i for i in movies if i.box_office is not None and
+                      i.box_office > 100_000_000]
         columns = ['box_office']
-    print_results(columns, result)
+    result = Result(columns, movie_list)
+    result.display()
     c.close()
     cnx.close()
 
@@ -76,8 +77,8 @@ def compare_movies(args):
         except TypeError:
             print('No necessary data for at least one of the movies')
         else:
-            result = prepare_result([attribute], [movie])
-            print_results([attribute], result)
+            result = Result([attribute], [movie])
+            result.display()
     c.close()
     cnx.close()
 
@@ -122,7 +123,7 @@ def high_scores(args):
         c, 'award_nominations')
     movie_oscars_won = Movie.load_movie_with_max_attribute(c, 'oscars_won')
     movie_imdb_rating = Movie.load_movie_with_max_attribute(c, 'imdb_rating')
-    result = [
+    data = [
         ('Runtime (min)', movie_runtime.title, movie_runtime.runtime),
         ('Box Office', movie_box_office.title, movie_box_office.box_office),
         ('Awards Won', movie_awards_won.title, movie_awards_won.title),
@@ -131,8 +132,10 @@ def high_scores(args):
         ('Oscars', movie_oscars_won.title, movie_oscars_won.oscars_won),
         ('IMDB Rating', movie_imdb_rating.title, movie_imdb_rating.imdb_rating)
     ]
-    columns = ['Movie', 'Value']
-    print_results(columns, result, first_col='COLUMN', column_wide=25)
+    result = Result(columns=[], movie_list=[])
+    result.columns = ['Movie', 'Value']
+    result.data = data
+    result.display(first_col='CATEGORY', column_wide=25)
     c.close()
     cnx.close()
 
