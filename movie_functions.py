@@ -115,22 +115,16 @@ def high_scores(args):
     """Show high scores for movies in database."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
-    movie_runtime = Movie.load_movie_with_max_attribute(c, 'runtime')
-    movie_box_office = Movie.load_movie_with_max_attribute(c, 'box_office')
-    movie_awards_won = Movie.load_movie_with_max_attribute(c, 'awards_won')
-    movie_award_nominations = Movie.load_movie_with_max_attribute(
-        c, 'award_nominations')
-    movie_oscars_won = Movie.load_movie_with_max_attribute(c, 'oscars_won')
-    movie_imdb_rating = Movie.load_movie_with_max_attribute(c, 'imdb_rating')
-    data = [
-        ('Runtime (min)', movie_runtime.title, movie_runtime.runtime),
-        ('Box Office', movie_box_office.title, movie_box_office.box_office),
-        ('Awards Won', movie_awards_won.title, movie_awards_won.title),
-        ('Award Nominations', movie_award_nominations.title,
-         movie_award_nominations.award_nominations),
-        ('Oscars', movie_oscars_won.title, movie_oscars_won.oscars_won),
-        ('IMDB Rating', movie_imdb_rating.title, movie_imdb_rating.imdb_rating)
-    ]
+    categories = ['runtime', 'box_office', 'awards_won', 'award_nominations',
+                  'oscars_won', 'imdb_rating']
+    first_column_data = ['Runtime (min)', 'Box Office ($)', 'Awards Won',
+                         'Award Nominations', 'Oscars', 'IMDB Rating']
+    data = []
+    for i in range(len(categories)):
+        top_movie = Movie.load_movie_with_max_attribute(c, categories[i])
+        row_data = [first_column_data[i], top_movie.title,
+                    getattr(top_movie, categories[i])]
+        data.append(tuple(row_data))
     result = Result(columns=[], movie_list=[])
     result.columns = ['Movie', 'Value']
     result.data = data
