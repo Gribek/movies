@@ -49,13 +49,13 @@ To sort in the descending order add flag: -d
  
  Command pattern: movie.py show_movies condition
  
- where condition is one of the following:
+ where condition is one of the following:  
  _oscar_nominated_no_win_ - shows movies that have been nominated for an Oscar but have not won any  
  _high_awards_win_rate_ - shows movies that have won at least half of nominations  
  _high_box_office_ - shows movies that have earned more than 100,000,000 $
  
  Example input:  
- python movies.py filter_by movie high_box_office
+ python movies.py show_movies high_box_office
  
  
  **5. _compare_ command - compare two movies and show which one is more successful in the selected category **
