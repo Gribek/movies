@@ -125,8 +125,7 @@ def high_scores(args):
         row_data = [first_column_data[i], top_movie.title,
                     getattr(top_movie, categories[i])]
         data.append(tuple(row_data))
-    result = Result(columns=[], movie_list=[])
-    result.columns = ['Movie', 'Value']
+    result = Result(columns=['Movie', 'Value'], movie_list=[])
     result.data = data
     result.display(first_col='CATEGORY', column_wide=25)
     c.close()
