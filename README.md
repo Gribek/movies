@@ -3,7 +3,22 @@
 
 #### Available commands
 
-**1. _sort_ command - sorting movies by chosen column(s).**
+**1. _add_ command - add new movie to the database**
+ 
+ Command pattern: movies.py add movie_identifier
+ 
+ where:  
+  _movie_identifier_ is a title or an imdb id of movie you want to add. If the title of the movie consist of more than one word, use underscores instead of spaces.
+ 
+ To add movie using imdb id add flag: -i
+ 
+ Example input:  
+ python movies.py add the_godfather
+ python movies.py add tt0068646 -i
+ 
+ If movie is already in the database, you will be informed.
+
+**2 _sort_ command - sorting movies by chosen column(s).**
 
 Command pattern: movies.py sort column
 
@@ -17,7 +32,7 @@ To sort in the descending order add flag: -d
  python movies.py sort year imdb_rating
  
  
- **2. _filter_by_ command - filter movies by chosen parameter**
+ **3. _filter_by_ command - filter movies by chosen parameter**
  
  To filter by actor, director or language use following command pattern:  
  movies.py filter_by parameter parameter_name value  
@@ -45,7 +60,7 @@ To sort in the descending order add flag: -d
  python movies.py filter_by movie high_box_office
  
  
- **3. _compare_ command - compare two movies by selected column**
+ **4. _compare_ command - compare two movies by selected column**
  
  Command pattern: movies.py compare column movie_title movie_title
  
@@ -58,18 +73,6 @@ To sort in the descending order add flag: -d
  
  Take into consideration that the comparison is not always possible due to the lack of necessary data about the movie. In that case, you will be notified by an appropriate message.
  
- 
- **4. _add_ command - add new movie to the database**
- 
- Command pattern: movies.py add movie_title
- 
- where:  
-  _movie_title_ is a title of movie you want to add. If the name of the movie consist of more than one word, use underscores instead of spaces.
- 
- Example input:  
- python movies.py add the_hangover
- 
- If movie is already in the database, you will be informed.
  
  **5. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
  
