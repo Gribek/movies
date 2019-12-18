@@ -84,9 +84,9 @@ def compare_movies(args):
 
 def add_new_movie(args):
     """Add new movie to the database."""
-    title = replace_underscores(args.movie_title)
+    title_or_imdb_id = replace_underscores(args.movie_identifier)
     try:
-        omdb = OmdbApiResponse(API_KEY, title)
+        omdb = OmdbApiResponse(title_or_imdb_id, args.imdb_id)
     except URLError:
         print('Unable to receive data from OMDb API. '
               'Check your internet connection.')
@@ -99,8 +99,8 @@ def add_new_movie(args):
                 movie = Movie.create_object_from_omdb_data(omdb.movie_data)
                 m = movie.save(c)
                 if m:
-                    print(f'Movie: {movie.title} successfully saved to the'
-                          f' database')
+                    print(f'Movie: {movie.title} has been successfully saved '
+                          f'to the database')
             else:
                 print(f'Movie: {omdb.movie_data["Title"]} already in the '
                       f'database')
@@ -108,7 +108,7 @@ def add_new_movie(args):
             c.close()
             cnx.close()
         else:
-            print(f'Movie: {title} not found.')
+            print(f'Movie: {title_or_imdb_id} not found.')
 
 
 def high_scores(args):
@@ -168,19 +168,25 @@ class OmdbApiResponse:
     selected movie.
     """
 
-    omdb_url = 'http://www.omdbapi.com/?'
+    __api_key = API_KEY
+    __omdb_url = 'http://www.omdbapi.com/?'
+    movie_data = {
+        'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
+        'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
+        'Country': None, 'Awards': None, 'imdbRating': None, 'imdbVotes': None,
+        'BoxOffice': None, 'imdbID': None
+    }
 
-    def __init__(self, api_key, title):
-        url = self.omdb_url + parse.urlencode({'apikey': api_key, 't': title})
+    def __init__(self, movie_identifier, is_imdb_id):
+        request_data = {'apikey': self.__api_key}
+        if is_imdb_id:
+            request_data['i'] = movie_identifier
+        else:
+            request_data['t'] = movie_identifier
+        url = self.__omdb_url + parse.urlencode(request_data)
         omdb_data = request.urlopen(url).read()
         json_data = json.loads(omdb_data)
         self.response = strtobool(json_data['Response'])
-        self.movie_data = {
-            'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
-            'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
-            'Country': None, 'Awards': None, 'imdbRating': None,
-            'imdbVotes': None, 'BoxOffice': None, 'imdbID': None
-        }
         if self.response:
             for key in self.movie_data:
                 try:

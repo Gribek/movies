@@ -39,7 +39,8 @@ parser_compare.set_defaults(function=compare_movies)
 
 # add command
 parser_add = subparsers.add_parser('add')
-parser_add.add_argument('movie_title')
+parser_add.add_argument('movie_identifier')
+parser_add.add_argument('-i', '--imdb_id', action='store_true')
 parser_add.set_defaults(function=add_new_movie)
 
 # highscores command
