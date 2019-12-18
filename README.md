@@ -18,7 +18,7 @@
  
  If movie is already in the database, you will be informed.
 
-**2 _sort_ command - sorting movies by chosen column(s).**
+**2. _sort_ command - sorting movies by chosen column(s).**
 
 Command pattern: movies.py sort column
 
@@ -45,7 +45,7 @@ To sort in the descending order add flag: -d
  python movies.py filter_by language spanish
 
 
-**4 _show_movies_ - show movies that match the given condition**
+**4. _show_movies_ - show movies that match the given condition**
  
  Command pattern: movie.py show_movies condition
  
@@ -58,7 +58,7 @@ To sort in the descending order add flag: -d
  python movies.py show_movies high_box_office
  
  
- **5. _compare_ command - compare two movies and show which one is more successful in the selected category **
+ **5. _compare_ command - compare two movies and show which one is more successful in the selected category**
  
  Command pattern: movies.py compare column movie_title movie_title
  
