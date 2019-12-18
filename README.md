@@ -34,33 +34,31 @@ To sort in the descending order add flag: -d
  
  **3. _filter_by_ command - filter movies by chosen parameter**
  
- To filter by actor, director or language use following command pattern:  
- movies.py filter_by parameter parameter_name value  
+ Command pattern: movies.py filter_by parameter value  
  
  where:  
-  _parameter_ is a subcommand,  
- _parameter_name_ is one option from list: actor, director, language  
+ _parameter_ is an option from list: actor, country, director, genre, language, writer, year
  _value_ is phrase that you looking for. You can search by actor/director surname only or by name and surname. In the second case use underscore instead of space and type name first, i.e. _name_surname_. _value_ is case insensitive.
  
  Example input:  
- python movies.py filter_by parameter actor Bruce_Willis  
- python movies.py filter_by parameter language russian
+ python movies.py filter_by actor Bruce_Willis  
+ python movies.py filter_by language spanish
 
- To filter by information about awards and box office use following command pattern:  
- movie.py filter_by movie movie_info
+
+**4 _show_movies_ - show movies that match the given condition**
  
- where:  
-  _movie_ is a subcommand  
- _movie_info_ is one option from list: oscar_nominated_no_win, high_awards_win_rate, high_box_office  
- _oscar_nominated_no_win_ - shows movies that was nominated for an Oscar but did not win any  
- _high_awards_win_rate_ - shows movies that won more than 80% of nominations  
- _high_box_office_ - shows movies that earned more than 100,000,000 $
+ Command pattern: movie.py show_movies condition
+ 
+ where condition is one of the following:
+ _oscar_nominated_no_win_ - shows movies that have been nominated for an Oscar but have not won any  
+ _high_awards_win_rate_ - shows movies that have won at least half of nominations  
+ _high_box_office_ - shows movies that have earned more than 100,000,000 $
  
  Example input:  
  python movies.py filter_by movie high_box_office
  
  
- **4. _compare_ command - compare two movies by selected category**
+ **5. _compare_ command - compare two movies and show which one is more successful in the selected category **
  
  Command pattern: movies.py compare column movie_title movie_title
  
@@ -74,7 +72,7 @@ To sort in the descending order add flag: -d
  Take into consideration that the comparison is not always possible due to the lack of necessary data about the movie. In that case, you will be notified by an appropriate message.
  
  
- **5. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
+ **6. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
  
   Command pattern: movies.py highscores
   
