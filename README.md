@@ -60,12 +60,12 @@ To sort in the descending order add flag: -d
  python movies.py filter_by movie high_box_office
  
  
- **4. _compare_ command - compare two movies by selected column**
+ **4. _compare_ command - compare two movies by selected category**
  
  Command pattern: movies.py compare column movie_title movie_title
  
  where:  
-  _column_ is one option from list: imdb_rating, box_office, awards_won, runtime  
+  _category_ is one option from list: imdb_rating, box_office, awards_won, runtime, awards_won, award_nominations, oscar_nominations, oscars_won
  _movie_title_ is title of one of the movies you want to compare. If the name of the movie consist of more than one word, use underscores instead of spaces. _movie_title_ is case insensitive.  
  
   Example input:  

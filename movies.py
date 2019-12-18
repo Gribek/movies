@@ -33,7 +33,9 @@ parser_filter_by_movie_info.set_defaults(function=filter_by_movie_info)
 # compare command
 parser_compare = subparsers.add_parser('compare')
 parser_compare.add_argument(
-    'column', choices=['imdb_rating', 'box_office', 'awards_won', 'runtime'])
+    'category', choices=['imdb_rating', 'box_office', 'awards_won', 'runtime',
+                         'award_nominations', 'oscar_nominations',
+                         'oscars_won'])
 parser_compare.add_argument('movie_title', nargs=2)
 parser_compare.set_defaults(function=compare_movies)
 

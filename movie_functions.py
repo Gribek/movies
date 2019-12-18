@@ -63,7 +63,7 @@ def compare_movies(args):
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies_to_compare = []
-    attribute = args.column
+    attribute = args.category
     for title in args.movie_title:
         movie = Movie.load_by_title(c, replace_underscores(title))
         if movie is not None:
