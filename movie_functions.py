@@ -24,10 +24,10 @@ def filter_by_parameter(args):
     """Get a list of movies filter by the given parameter."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
-    if args.parameter == 'actor':
-        args.parameter += 's'
-    value = replace_underscores(args.value)
     column = args.parameter
+    if column == 'actor':
+        column += 's'
+    value = replace_underscores(args.value)
     movies = Movie.load_with_filter(c, column, value)
     result = Result([column], movies)
     result.display()
@@ -35,20 +35,20 @@ def filter_by_parameter(args):
     cnx.close()
 
 
-def filter_by_movie_info(args):
+def show_movies_with_condition(args):
     """Get a list of movies that match the given condition."""
     cnx = connection(DATABASE)
     c = cnx.cursor()
     movies = Movie.load_all(c)
-    if args.movie_info == 'oscar_nominated_no_win':
+    if args.condition == 'oscar_nominated_no_win':
         movie_list = [i for i in movies if i.oscars_won == 0 and
                       i.oscar_nominations > 0]
-        columns = ['oscar nominated']
-    elif args.movie_info == 'high_awards_win_rate':
-        movie_list = [i for i in movies
-                      if i.awards_won > i.award_nominations * 0.8]
+        columns = ['oscar_nominations']
+    elif args.condition == 'high_awards_win_rate':
+        movie_list = [i for i in movies if i.awards_won > 0 and
+                      i.awards_won >= i.award_nominations]
         columns = ['awards_won', 'award_nominations']
-    else:
+    elif args.condition == 'high_box_office':
         movie_list = [i for i in movies if i.box_office is not None and
                       i.box_office > 100_000_000]
         columns = ['box_office']

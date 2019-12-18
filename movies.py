@@ -1,7 +1,7 @@
 import argparse
 
 from movie_functions import sort_movies, compare_movies, filter_by_parameter, \
-    filter_by_movie_info, add_new_movie, high_scores
+    show_movies_with_condition, add_new_movie, high_scores
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
@@ -17,18 +17,16 @@ parser_sort.set_defaults(function=sort_movies)
 
 # filter_by command
 parser_filter_by = subparsers.add_parser('filter_by')
-subparsers_filter_by = parser_filter_by.add_subparsers()
+parser_filter_by.add_argument('parameter', choices=[
+    'actor', 'director', 'language', 'year', 'genre', 'writer', 'country'])
+parser_filter_by.add_argument('value')
+parser_filter_by.set_defaults(function=filter_by_parameter)
 
-parser_filter_by_parameter = subparsers_filter_by.add_parser('parameter')
-parser_filter_by_parameter.add_argument('parameter', choices=[
-    'actor', 'director', 'language'])
-parser_filter_by_parameter.add_argument('value')
-parser_filter_by_parameter.set_defaults(function=filter_by_parameter)
-
-parser_filter_by_movie_info = subparsers_filter_by.add_parser('movie')
-parser_filter_by_movie_info.add_argument('movie_info', choices=[
+# show_movies command
+parser_show_movies = subparsers.add_parser('show_movies')
+parser_show_movies.add_argument('condition', choices=[
     'oscar_nominated_no_win', 'high_awards_win_rate', 'high_box_office'])
-parser_filter_by_movie_info.set_defaults(function=filter_by_movie_info)
+parser_show_movies.set_defaults(function=show_movies_with_condition)
 
 # compare command
 parser_compare = subparsers.add_parser('compare')
