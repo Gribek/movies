@@ -170,12 +170,6 @@ class OmdbApiResponse:
 
     __api_key = API_KEY
     __omdb_url = 'http://www.omdbapi.com/?'
-    movie_data = {
-        'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
-        'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
-        'Country': None, 'Awards': None, 'imdbRating': None, 'imdbVotes': None,
-        'BoxOffice': None, 'imdbID': None
-    }
 
     def __init__(self, movie_identifier, is_imdb_id):
         request_data = {'apikey': self.__api_key}
@@ -187,6 +181,12 @@ class OmdbApiResponse:
         omdb_data = request.urlopen(url).read()
         json_data = json.loads(omdb_data)
         self.response = strtobool(json_data['Response'])
+        self.movie_data = {
+            'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
+            'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
+            'Country': None, 'Awards': None, 'imdbRating': None, 'imdbVotes': None,
+            'BoxOffice': None, 'imdbID': None
+        }
         if self.response:
             for key in self.movie_data:
                 try:
