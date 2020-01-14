@@ -10,29 +10,44 @@
  where:  
   _movie_identifier_ is a title or an imdb id of movie you want to add. If the title of the movie consist of more than one word, use underscores instead of spaces.
  
- To add movie using imdb id add flag: -i
+ Use flag: -i, to add movie using imdb id instead of movie title
  
  Example input:  
  python movies.py add the_godfather
  python movies.py add tt0068646 -i
  
  If movie is already in the database, you will be informed.
+ 
 
-**2. _sort_ command - sorting movies by chosen column(s).**
+**2. _movie_details_ commnad - show all information about a single movie**
+
+ Command pattern: movies.py movie_details movie_identifier
+ 
+ where:  
+  _movie_identifier_ is a title or an imdb id of the movie you want to view information about. If the title of the movie consist of more than one word, use underscores instead of spaces.
+
+ Use flag: -i, to show information about the movie using imdb id instead of movie title
+ 
+ Example input:  
+ python movies.py movie_details the_godfather
+ python movies.py movie_details tt0068646 -i
+  
+
+**3. _sort_ command - sorting movies by chosen column(s).**
 
 Command pattern: movies.py sort column
 
 where:  
  _column_ is one from the list: year, runtime, genre, director, cast, writer, language, country, awards, imdb_rating, imdb_votes, box_office. You can choose more than one column to sort by multiple columns, in that case just add its name at the end of the command after space.
 
-To sort in the descending order add flag: -d
+ Use flag: -d, to sort in the descending order
  
  Example input:  
  python movies.py sort year  
  python movies.py sort year imdb_rating
  
  
- **3. _filter_by_ command - filter movies by chosen parameter**
+ **4. _filter_by_ command - filter movies by chosen parameter**
  
  Command pattern: movies.py filter_by parameter value  
  
@@ -45,7 +60,7 @@ To sort in the descending order add flag: -d
  python movies.py filter_by language spanish
 
 
-**4. _show_movies_ - show movies that match the given condition**
+**5. _show_movies_ - show movies that match the given condition**
  
  Command pattern: movie.py show_movies condition
  
@@ -58,7 +73,7 @@ To sort in the descending order add flag: -d
  python movies.py show_movies high_box_office
  
  
- **5. _compare_ command - compare two movies and show which one is more successful in the selected category**
+ **6. _compare_ command - compare two movies and show which one is more successful in the selected category**
  
  Command pattern: movies.py compare column movie_title movie_title
  
@@ -72,7 +87,7 @@ To sort in the descending order add flag: -d
  Take into consideration that the comparison is not always possible due to the lack of necessary data about the movie. In that case, you will be notified by an appropriate message.
  
  
- **6. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
+ **7. _highscores_ command - show current top values in following categories: runtime, bo office earnings, awards won, nominations, Oscars won, IMDB rating**
  
   Command pattern: movies.py highscores
   
