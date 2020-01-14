@@ -1,7 +1,7 @@
 import argparse
 
 from movie_functions import sort_movies, compare_movies, filter_by_parameter, \
-    show_movies_with_condition, add_new_movie, high_scores
+    show_movies_with_condition, add_new_movie, high_scores, movie_details
 
 parser = argparse.ArgumentParser()
 subparsers = parser.add_subparsers()
@@ -46,6 +46,12 @@ parser_add.set_defaults(function=add_new_movie)
 # highscores command
 parser_highscores = subparsers.add_parser('highscores')
 parser_highscores.set_defaults(function=high_scores)
+
+# movie_details command
+parser_movie_details = subparsers.add_parser('movie_details')
+parser_movie_details.add_argument('movie_identifier')
+parser_movie_details.add_argument('-i', '--imdb_id', action='store_true')
+parser_movie_details.set_defaults(function=movie_details)
 
 args = parser.parse_args()
 args.function(args)

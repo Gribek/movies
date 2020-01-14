@@ -2,6 +2,7 @@ from distutils.util import strtobool
 from urllib.error import URLError
 from urllib import request, parse
 from operator import attrgetter
+from pprint import pprint
 import json
 
 from database.database_connection import connection
@@ -132,6 +133,24 @@ def high_scores(args):
     cnx.close()
 
 
+def movie_details(args):
+    """Show all information about a movie."""
+    cnx = connection(DATABASE)
+    c = cnx.cursor()
+    movie_title_or_id = replace_underscores(args.movie_identifier)
+    if args.imdb_id:
+        movie = Movie.load_by_imdb_id(c, movie_title_or_id)
+    else:
+        movie = Movie.load_by_title(c, movie_title_or_id)
+    movie_data = vars(movie)
+    columns = list(movie_data.keys())
+    columns.remove('_Movie__id')
+    result = Result(columns=columns, movie_list=[movie])
+    result.display_single_movie()
+    c.close()
+    cnx.close()
+
+
 def replace_underscores(text):
     """Replace underscores with spaces."""
     return text.replace('_', ' ')
@@ -141,7 +160,7 @@ class Result:
     """The class that represents results displayed in terminal."""
 
     def __init__(self, columns, movie_list):
-        self.columns = columns
+        self.columns = [replace_underscores(x.upper()) for x in columns]
         self.data = []
         for movie in movie_list:
             row = [movie.title]
@@ -151,14 +170,20 @@ class Result:
 
     def display(self, first_col='TITLE', column_wide=10):
         """Format and print the result."""
-        c = [replace_underscores(x.upper()) for x in self.columns]
         template = '{0:40}'
-        for i in range(0, len(c)):
+        for i in range(0, len(self.columns)):
             template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
-        print(template.format(first_col, *c))
+        print(template.format(first_col, *self.columns))
         for row in self.data:
             row_data = ['' if i is None else i for i in row]
             print(template.format(*row_data))
+
+    def display_single_movie(self):
+        """Format and print information about a single movie."""
+        template = '{0:20} | {1:100}'
+        del self.data[0][0]  # remove double title
+        for i in range(len(self.columns)):
+            print(template.format(self.columns[i], str(self.data[0][i])))
 
 
 class OmdbApiResponse:
@@ -184,8 +209,8 @@ class OmdbApiResponse:
         self.movie_data = {
             'Title': None, 'Year': None, 'Runtime': None, 'Genre': None,
             'Director': None, 'Actors': None, 'Writer': None, 'Language': None,
-            'Country': None, 'Awards': None, 'imdbRating': None, 'imdbVotes': None,
-            'BoxOffice': None, 'imdbID': None
+            'Country': None, 'Awards': None, 'imdbRating': None,
+            'imdbVotes': None, 'BoxOffice': None, 'imdbID': None
         }
         if self.response:
             for key in self.movie_data:
