@@ -2,7 +2,6 @@ from distutils.util import strtobool
 from urllib.error import URLError
 from urllib import request, parse
 from operator import attrgetter
-from pprint import pprint
 import json
 
 from database.database_connection import connection
@@ -188,7 +187,7 @@ class Result:
             print(template.format(self.columns[i], str(self.data[0][i])))
 
     def check_data_length(self, i=-1):
-        column_width = 0
+        column_width = len(self.columns[i]) if i > -1 else 0
         for j in self.data:
             if len(str(j[1 + i])) > column_width:
                 column_width = len(str(j[1 + i]))
