@@ -128,7 +128,7 @@ def high_scores(args):
         data.append(tuple(row_data))
     result = Result(columns=['Movie', 'Value'], movie_list=[])
     result.data = data
-    result.display(first_col='CATEGORY', column_wide=25)
+    result.display(first_col='CATEGORY')
     c.close()
     cnx.close()
 
@@ -168,11 +168,13 @@ class Result:
                 row.append(getattr(movie, column))
             self.data.append(row)
 
-    def display(self, first_col='TITLE', column_wide=10):
+    def display(self, first_col='TITLE'):
         """Format and print the result."""
-        template = '{0:40}'
+        first_column_width = self.check_data_length()
+        template = '{0:%d}' % (first_column_width + 2)
         for i in range(0, len(self.columns)):
-            template += '| {%s:<%s} ' % (str(i + 1), str(column_wide))
+            column_width = self.check_data_length(i)
+            template += '| {%s:<%s} ' % (str(i + 1), str(column_width + 2))
         print(template.format(first_col, *self.columns))
         for row in self.data:
             row_data = ['' if i is None else i for i in row]
@@ -184,6 +186,13 @@ class Result:
         del self.data[0][0]  # remove double title
         for i in range(len(self.columns)):
             print(template.format(self.columns[i], str(self.data[0][i])))
+
+    def check_data_length(self, i=-1):
+        column_width = 0
+        for j in self.data:
+            if len(str(j[1 + i])) > column_width:
+                column_width = len(str(j[1 + i]))
+        return column_width
 
 
 class OmdbApiResponse:
