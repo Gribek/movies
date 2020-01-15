@@ -202,10 +202,10 @@ def test_result_init(columns, movie_list):
     movie_1, movie_2, movie_3, movie_4 = movie_list
     assert hasattr(result, 'columns'), '"column" attribute is missing'
     assert hasattr(result, 'data'), '"data" attribute is missing'
-    assert 'LANGUAGE'.upper() in result.columns, 'Column name is missing'
-    assert 'IMDB RATING' in result.columns, 'Column name is missing'
     assert 'language' not in result.columns, 'Column name is not in uppercase'
     assert 'IMDB_RATING' not in result.columns, 'Column names with underscores'
+    assert 'LANGUAGE' in result.columns, 'Column name is missing'
+    assert 'IMDB RATING' in result.columns, 'Column name is missing'
     assert result.data == [
         [movie_1.title, movie_1.language, movie_1.imdb_rating],
         [movie_2.title, movie_2.language, movie_2.imdb_rating],
