@@ -1,5 +1,9 @@
 ### Movies
 
+This is a command line program that allows you to create a personal movie database based on the OMDb API.  
+
+To test it, To test it, just download and try the commands below.
+If you want to use this program, generate your API key here: http://www.omdbapi.com/apikey.aspx and place new value in the settings.txt file.
 
 #### Available commands
 
