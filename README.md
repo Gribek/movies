@@ -3,7 +3,9 @@
 This is a command line program that allows you to create a personal movie database based on the OMDb API.  
 
 To test it, just download and try the commands below.
-If you want to use this program, generate your API key here: http://www.omdbapi.com/apikey.aspx and place new value in the settings.txt file.
+
+If you want to use this program, generate your API key here: http://www.omdbapi.com/apikey.aspx and place new value in the settings.py file.  
+Also in setting.py, change DATABASE value to 'movies_db.sqlite', which will let you to start with an empty database.
 
 #### Available commands
 
