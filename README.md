@@ -9,17 +9,24 @@
 This is a command line program that allows you to create a personal database of information related to movies. The data source for the application is the OMDb API. 
 
 ### Technologies
-* Python 3.7
-* SQLite
-* pytest
+* Python 3.7.5
+* SQLite 3.22.0
+* pytest 5.2.2
 
 ### Setup
-To test this program, download the repository and try the commands below. The attached database file contains a certain amount of data, so you'll see the result of the commands you are running.
+To test this program, download the repository and try the commands below. The attached database file contains a certain amount of data, so you'll see the result of the commands you are running. 
 
 If you want to use this program, generate your API key here: http://www.omdbapi.com/apikey.aspx and place new value in the settings.py file.  
 Also in setting.py, change DATABASE value to 'movies_db.sqlite', which will let you to start with an empty database.
 
+To complete the program setup, prepare a virtual environment for it and install all dependencies using the command:
+```
+$ pip install -r requirements.txt
+```
+
 #### Available commands
+
+Note that the application requires Python 3, so you may need to use the python3 command instead of python.
 
 **1. _add_ command - add new movie to the database**
  
