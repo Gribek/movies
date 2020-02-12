@@ -24,7 +24,7 @@ To complete the program setup, prepare a virtual environment for it and install 
 $ pip install -r requirements.txt
 ```
 
-#### Available commands
+### Available commands
 
 Note that the application requires Python 3, so you may need to use the python3 command instead of python.
 
